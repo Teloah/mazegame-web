@@ -1,0 +1,46 @@
+html, body {
+	font-family: verdana;
+	margin: 0;
+	height: 100%;
+}
+
+.box {
+	display: flex;
+	flex-flow: column;
+	height: 100%;
+}
+
+.box .row {
+	flex: 0 1 0;
+}
+
+.box header {
+	flex: 0 1 auto;
+}
+
+.box .content {
+	flex: 1 1 auto;
+}
+
+.box footer{
+	flex: 0 1 0;
+}
+
+header {
+	background: #888;
+	color: #eee;
+	font-size: 30px;
+	font-weight: bold;
+	padding: 0 20px;
+}
+
+footer {
+	background: #555;
+	color: #eee;
+	font-size: 15px;
+	padding: 0 20px;
+}
+
+#game {
+	background: #444;
+}
