@@ -1,17 +1,15 @@
 html, body {
 	font-family: verdana;
 	margin: 0;
+	padding: 0;
 	height: 100%;
 }
 
 .box {
 	display: flex;
 	flex-flow: column;
+	align-content: stretch;
 	height: 100%;
-}
-
-.box .row {
-	flex: 0 1 0;
 }
 
 .box header {
@@ -23,7 +21,7 @@ html, body {
 }
 
 .box footer{
-	flex: 0 1 0;
+	flex: 0 1 auto;
 }
 
 header {
@@ -43,4 +41,11 @@ footer {
 
 #game {
 	background: #444;
+}
+
+canvas {
+	background: #222;
+	width: 90%;
+	height: 400px;
+	margin: 20px;
 }
