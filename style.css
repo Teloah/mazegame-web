@@ -41,11 +41,12 @@ footer {
 
 #game {
 	background: #444;
+	border: 1px solid #000;
 }
 
-canvas {
-	background: #222;
+.gamescreen {
 	width: 720px;
 	height: 480px;
 	margin: 20px;
+	position: absolute;
 }

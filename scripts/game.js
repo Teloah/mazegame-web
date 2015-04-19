@@ -1,6 +1,6 @@
 "use strict"
 
-var canvasGame = document.getElementById("background"),
+var canvasGame = document.getElementById("maingame"),
 	contextGame = canvasGame.getContext("2d"),
 	img = {
 		bricks: 2,
@@ -10,6 +10,8 @@ var canvasGame = document.getElementById("background"),
 	lastLoopTime = new Date(),
 	elapsedSecs = 0,
 	requestAnimFrame = window.requestAnimationFrame,
+	frames = 0,
+	lastFrames = 0,
 	imgSprites = new Image();
 imgSprites.src = "images/sprites.png";
 imgSprites.onload = init;
@@ -39,11 +41,16 @@ function gameLoop() {
 function paintElapsedTime() {
 	var tickTime = new Date();
 	if (tickTime - lastLoopTime > 1000) {
+		lastFrames = frames;
+		frames = 0;
 		lastLoopTime = tickTime;
 		elapsedSecs++;
 	}
+	frames++;
 	contextGame.font = "30px Verdana";
-	contextGame.fillText(elapsedSecs.toString(), 30, 30);
+	contextGame.fillText(elapsedSecs.toString(), 24, canvasGame.height - 24);
+	contextGame.font = "15px Verdana";
+	contextGame.fillText(lastFrames.toString(), 24, canvasGame.height - 50);
 }
 function paintImageRow(sprite, start, end, y) {
 	for (var x = start; x < end; x += 24) {
