@@ -5,7 +5,22 @@ var canvasGame = document.getElementById("maingame"),
 	img = {
 		bricks: 2,
 		darkbricks: 28,
-		ground: 54
+		door: 54,
+		ground: 80,
+		key: 106,
+		zombie: 123,
+		player: 142,
+		box: 160
+	},
+	img_width = {
+		bricks: 24,
+		darkbricks: 24,
+		door: 24,
+		ground: 24,
+		key: 13,
+		zombie: 16,
+		player: 15,
+		box: 15
 	},
 	lastLoopTime = new Date(),
 	elapsedSecs = 0,
@@ -27,8 +42,10 @@ function paintBorders() {
 	paintImageColumn("darkbricks", 24, 480 - 24, 0);
 	paintImageColumn("darkbricks", 24, 480 - 24, 720 - 24);
 	paintImageRow("darkbricks", 0, 720, 480 - 24);
+	paintImage("door", 0, 24);
 	
 	fillImageRect("ground", 24, 24, 720 - 24, 480 - 24);
+	paintImage("player", 24, 24);
 }
 
 function gameLoop() {
@@ -65,7 +82,7 @@ function paintImageColumn(sprite, start, end, x) {
 }
 
 function paintImage(sprite, x, y) {
-	contextGame.drawImage(imgSprites, img[sprite], 2, 24, 24, x, y, 24, 24);
+	contextGame.drawImage(imgSprites, img[sprite], 2, img_width[sprite], 24, x, y, img_width[sprite], 24);
 }
 
 function fillImageRect(sprite, x1, y1, x2, y2) {
