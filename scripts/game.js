@@ -2,25 +2,37 @@
 
 var canvasGame = document.getElementById("maingame"),
 	contextGame = canvasGame.getContext("2d"),
-	img = {
-		bricks: 2,
-		darkbricks: 28,
-		door: 54,
-		ground: 80,
-		key: 106,
-		zombie: 123,
-		player: 142,
-		box: 160
+	gfx_bricks = {
+		left: 2,
+		width: 24
 	},
-	img_width = {
-		bricks: 24,
-		darkbricks: 24,
-		door: 24,
-		ground: 24,
-		key: 13,
-		zombie: 16,
-		player: 15,
-		box: 15
+	gfx_darkbricks = {
+		left: 28,
+		width: 24
+	},
+	gfx_door = {
+		left: 54,
+		width: 24
+	},
+	gfx_ground = {
+		left: 80,
+		width: 24
+	},
+	gfx_key = {
+		left: 106,
+		width: 13
+	},
+	gfx_zombie = {
+		left: 123,
+		width: 16
+	},
+	gfx_player = {
+		left: 142,
+		width: 15
+	},
+	gfx_box = {
+		left: 160,
+		width: 15
 	},
 	lastLoopTime = new Date(),
 	elapsedSecs = 0,
@@ -38,14 +50,14 @@ function init() {
 }
 
 function paintBorders() {
-	paintImageRow("darkbricks", 0, 720, 0);
-	paintImageColumn("darkbricks", 24, 480 - 24, 0);
-	paintImageColumn("darkbricks", 24, 480 - 24, 720 - 24);
-	paintImageRow("darkbricks", 0, 720, 480 - 24);
-	paintImage("door", 0, 24);
+	paintImageRow(gfx_darkbricks, 0, 720, 0);
+	paintImageColumn(gfx_darkbricks, 24, 480 - 24, 0);
+	paintImageColumn(gfx_darkbricks, 24, 480 - 24, 720 - 24);
+	paintImageRow(gfx_darkbricks, 0, 720, 480 - 24);
+	paintImage(gfx_door, 0, 24);
 	
-	fillImageRect("ground", 24, 24, 720 - 24, 480 - 24);
-	paintImage("player", 24, 24);
+	fillImageRect(gfx_ground, 24, 24, 720 - 24, 480 - 24);
+	paintImage(gfx_player, 24, 24);
 }
 
 function gameLoop() {
@@ -82,7 +94,7 @@ function paintImageColumn(sprite, start, end, x) {
 }
 
 function paintImage(sprite, x, y) {
-	contextGame.drawImage(imgSprites, img[sprite], 2, img_width[sprite], 24, x, y, img_width[sprite], 24);
+	contextGame.drawImage(imgSprites, sprite.left, 2, sprite.width, 24, x, y, sprite.width, 24);
 }
 
 function fillImageRect(sprite, x1, y1, x2, y2) {
