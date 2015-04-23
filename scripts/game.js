@@ -2,38 +2,14 @@
 
 var canvasGame = document.getElementById("maingame"),
 	contextGame = canvasGame.getContext("2d"),
-	gfx_bricks = {
-		left: 2,
-		width: 24
-	},
-	gfx_darkbricks = {
-		left: 28,
-		width: 24
-	},
-	gfx_door = {
-		left: 54,
-		width: 24
-	},
-	gfx_ground = {
-		left: 80,
-		width: 24
-	},
-	gfx_key = {
-		left: 106,
-		width: 13
-	},
-	gfx_zombie = {
-		left: 123,
-		width: 16
-	},
-	gfx_player = {
-		left: 142,
-		width: 15
-	},
-	gfx_box = {
-		left: 160,
-		width: 15
-	},
+	gfx_bricks = { left: 2, width: 24 },
+	gfx_darkbricks = { left: 28, width: 24 },
+	gfx_door = { left: 54, width: 24 },
+	gfx_ground = { left: 80, width: 24 },
+	gfx_key = { left: 106, width: 13 },
+	gfx_zombie = { left: 123, width: 16 },
+	gfx_player = { left: 142, width: 15 },
+	gfx_box = { left: 160, width: 15 },
 	lastLoopTime = new Date(),
 	elapsedSecs = 0,
 	requestAnimFrame = window.requestAnimationFrame,
