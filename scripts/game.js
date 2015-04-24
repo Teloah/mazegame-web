@@ -7,42 +7,81 @@ var game = {
 	lastFrames : 0
 }
 
-var keys = {
-	right : {
-		down: false
-	},
-	left : {
-		down: false
-	}
+var player = {
+	left : 24,
+	top : 24
 }
+
+var keys = [
+	{
+		// left
+		ord: 37,
+		down: false,
+		exec : function() {
+			player.left = player.left - 24;
+		}
+	},
+	{
+		// up
+		ord: 38,
+		down: false,
+		exec : function() {
+			player.top = player.top - 24;
+		}
+	},
+	{
+		// right
+		ord: 39,
+		down: false,
+		exec : function() {
+			player.left = player.left + 24;
+		}
+	},
+	{
+		// down
+		ord: 40,
+		down: false,
+		exec : function() {
+			player.top = player.top + 24;
+		}
+	}
+]
 
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
 
 function handleKeyDown(event) {
-	if (event.which === 39) {
-		keys.right.down = true;
-		contextGame.globalAlpha = 0.5;
-	}
+	keys.forEach(function(key, index, array) {
+		if (event.which === key.ord) {
+			key.down = true;
+			// contextGame.globalAlpha = 0.5;
+			key.exec();
+		}
+	})
 }
 
 function handleKeyUp(event) {
-	if (event.which === 39) {
-		keys.right.down = false;
-		contextGame.globalAlpha = 1;
-	}
+	keys.forEach(function(key, index, array) {
+		if (event.which === key.ord) {
+			key.down = false;
+			contextGame.globalAlpha = 1;
+		}
+	})
+}
+
+var gfx = {
+	bricks : { left: 2, width: 24 },
+	darkbricks : { left: 28, width: 24 },
+	door : { left: 54, width: 24 },
+	ground : { left: 80, width: 24 },
+	key : { left: 106, width: 13 },
+	zombie : { left: 123, width: 16 },
+	player : { left: 142, width: 15 },
+	box : { left: 160, width: 15 }
 }
 
 var canvasGame = document.getElementById("maingame"),
 	contextGame = canvasGame.getContext("2d"),
-	gfx_bricks = { left: 2, width: 24 },
-	gfx_darkbricks = { left: 28, width: 24 },
-	gfx_door = { left: 54, width: 24 },
-	gfx_ground = { left: 80, width: 24 },
-	gfx_key = { left: 106, width: 13 },
-	gfx_zombie = { left: 123, width: 16 },
-	gfx_player = { left: 142, width: 15 },
-	gfx_box = { left: 160, width: 15 },
 	requestAnimFrame = window.requestAnimationFrame,
 	imgSprites = new Image();
 imgSprites.src = "images/sprites.png";
@@ -54,20 +93,20 @@ function init() {
 }
 
 function paintBorders() {
-	paintImageRow(gfx_darkbricks, 0, 720, 0);
-	paintImageColumn(gfx_darkbricks, 24, 480 - 24, 0);
-	paintImageColumn(gfx_darkbricks, 24, 480 - 24, 720 - 24);
-	paintImageRow(gfx_darkbricks, 0, 720, 480 - 24);
-	paintImage(gfx_door, 0, 24);
+	paintImageRow(gfx.darkbricks, 0, 720, 0);
+	paintImageColumn(gfx.darkbricks, 24, 480 - 24, 0);
+	paintImageColumn(gfx.darkbricks, 24, 480 - 24, 720 - 24);
+	paintImageRow(gfx.darkbricks, 0, 720, 480 - 24);
+	paintImage(gfx.door, 0, 24);
 	
-	fillImageRect(gfx_ground, 24, 24, 720 - 24, 480 - 24);
-	paintImage(gfx_player, 24, 24);
+	fillImageRect(gfx.ground, 24, 24, 720 - 24, 480 - 24);
 }
 
 function gameLoop() {
 	document.getElementById("score").innerHTML = "<p>Score: " + game.elapsedSecs.toString() + "</p>";
 	contextGame.clearRect(0, 0, canvasGame.width, canvasGame.height);
 	paintBorders();
+	paintImage(gfx.player, player.left, player.top);
 	paintElapsedTime();
 	requestAnimFrame(gameLoop);
 }
