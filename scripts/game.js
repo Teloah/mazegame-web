@@ -55,7 +55,6 @@ function handleKeyDown(event) {
 	keys.forEach(function(key, index, array) {
 		if (event.which === key.ord) {
 			key.down = true;
-			// contextGame.globalAlpha = 0.5;
 			key.exec();
 		}
 	});
@@ -65,20 +64,19 @@ function handleKeyUp(event) {
 	keys.forEach(function(key, index, array) {
 		if (event.which === key.ord) {
 			key.down = false;
-			contextGame.globalAlpha = 1;
 		}
 	});
 }
 
 var gfx = {
-	bricks : { left: 2, width: 24 },
-	darkbricks : { left: 28, width: 24 },
-	door : { left: 54, width: 24 },
-	ground : { left: 80, width: 24 },
-	key : { left: 106, width: 13 },
-	zombie : { left: 123, width: 16 },
-	player : { left: 142, width: 15 },
-	box : { left: 160, width: 15 }
+	bricks :     { left: 2,   width: 24 },
+	darkbricks : { left: 28,  width: 24 },
+	door :       { left: 54,  width: 24 },
+	ground :     { left: 80,  width: 24 },
+	key :        { left: 106, width: 13 },
+	zombie :     { left: 123, width: 16 },
+	player :     { left: 142, width: 15 },
+	box :        { left: 160, width: 15 }
 };
 
 var canvasGame = document.getElementById("maingame"),
