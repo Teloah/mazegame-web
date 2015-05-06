@@ -1,16 +1,17 @@
-"use strict"
+(function() {
+"use strict";
 
 var game = {
 	lastLoopTime : new Date(),
 	elapsedSecs : 0,
 	frames : 0,
 	lastFrames : 0
-}
+};
 
 var player = {
 	left : 24,
 	top : 24
-}
+};
 
 var keys = [
 	{
@@ -45,7 +46,7 @@ var keys = [
 			player.top = player.top + 24;
 		}
 	}
-]
+];
 
 window.addEventListener("keydown", handleKeyDown);
 window.addEventListener("keyup", handleKeyUp);
@@ -57,7 +58,7 @@ function handleKeyDown(event) {
 			// contextGame.globalAlpha = 0.5;
 			key.exec();
 		}
-	})
+	});
 }
 
 function handleKeyUp(event) {
@@ -66,7 +67,7 @@ function handleKeyUp(event) {
 			key.down = false;
 			contextGame.globalAlpha = 1;
 		}
-	})
+	});
 }
 
 var gfx = {
@@ -78,7 +79,7 @@ var gfx = {
 	zombie : { left: 123, width: 16 },
 	player : { left: 142, width: 15 },
 	box : { left: 160, width: 15 }
-}
+};
 
 var canvasGame = document.getElementById("maingame"),
 	contextGame = canvasGame.getContext("2d"),
@@ -149,3 +150,4 @@ function fillImageRect(sprite, x1, y1, x2, y2) {
 		}
 	}
 }
+}());
