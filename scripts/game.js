@@ -17,7 +17,6 @@ var keys = [
 	{
 		// left
 		ord: 37,
-		down: false,
 		exec : function() {
 			player.left = player.left - 24;
 		}
@@ -25,7 +24,6 @@ var keys = [
 	{
 		// up
 		ord: 38,
-		down: false,
 		exec : function() {
 			player.top = player.top - 24;
 		}
@@ -33,7 +31,6 @@ var keys = [
 	{
 		// right
 		ord: 39,
-		down: false,
 		exec : function() {
 			player.left = player.left + 24;
 		}
@@ -41,7 +38,6 @@ var keys = [
 	{
 		// down
 		ord: 40,
-		down: false,
 		exec : function() {
 			player.top = player.top + 24;
 		}
@@ -49,21 +45,11 @@ var keys = [
 ];
 
 window.addEventListener("keydown", handleKeyDown);
-window.addEventListener("keyup", handleKeyUp);
 
 function handleKeyDown(event) {
 	keys.forEach(function(key, index, array) {
 		if (event.which === key.ord) {
-			key.down = true;
 			key.exec();
-		}
-	});
-}
-
-function handleKeyUp(event) {
-	keys.forEach(function(key, index, array) {
-		if (event.which === key.ord) {
-			key.down = false;
 		}
 	});
 }
