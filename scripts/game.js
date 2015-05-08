@@ -1,6 +1,8 @@
 (function() {
 "use strict";
 
+var cellsize = 24;
+
 var game = {
 	lastLoopTime : new Date(),
 	elapsedSecs : 0,
@@ -13,33 +15,38 @@ var player = {
 	top : 24
 };
 
+var maze = {
+	width : 720,
+	height : 480
+};
+
 var keys = [
 	{
 		// left
 		ord: 37,
 		exec : function() {
-			player.left = player.left - 24;
+			player.left = player.left - cellsize;
 		}
 	},
 	{
 		// up
 		ord: 38,
 		exec : function() {
-			player.top = player.top - 24;
+			player.top = player.top - cellsize;
 		}
 	},
 	{
 		// right
 		ord: 39,
 		exec : function() {
-			player.left = player.left + 24;
+			player.left = player.left + cellsize;
 		}
 	},
 	{
 		// down
 		ord: 40,
 		exec : function() {
-			player.top = player.top + 24;
+			player.top = player.top + cellsize;
 		}
 	}
 ];
@@ -52,7 +59,7 @@ function handleKeyDown(event) {
 			key.exec();
 		}
 	});
-}
+};
 
 var gfx = {
 	bricks :     { left: 2,   width: 24 },
@@ -78,13 +85,13 @@ function init() {
 }
 
 function paintBorders() {
-	paintImageRow(gfx.darkbricks, 0, 720, 0);
-	paintImageColumn(gfx.darkbricks, 24, 480 - 24, 0);
-	paintImageColumn(gfx.darkbricks, 24, 480 - 24, 720 - 24);
-	paintImageRow(gfx.darkbricks, 0, 720, 480 - 24);
-	paintImage(gfx.door, 0, 24);
+	paintImageRow(gfx.darkbricks, 0, maze.width, 0);
+	paintImageColumn(gfx.darkbricks, cellsize, maze.height - cellsize, 0);
+	paintImageColumn(gfx.darkbricks, cellsize, maze.height - cellsize, maze.width - cellsize);
+	paintImageRow(gfx.darkbricks, 0, maze.width, maze.height - cellsize);
+	paintImage(gfx.door, 0, cellsize);
 	
-	fillImageRect(gfx.ground, 24, 24, 720 - 24, 480 - 24);
+	fillImageRect(gfx.ground, cellsize, cellsize, maze.width - cellsize, maze.height - cellsize);
 }
 
 function gameLoop() {
@@ -98,7 +105,7 @@ function gameLoop() {
 
 function paintElapsedTime() {
 	var tickTime = new Date();
-	if (tickTime - game.lastLoopTime > 1000) {
+	if ((tickTime - game.lastLoopTime) > 1000) {
 		game.lastFrames = game.frames;
 		game.frames = 0;
 		game.lastLoopTime = tickTime;
@@ -106,30 +113,30 @@ function paintElapsedTime() {
 	}
 	game.frames++;
 	contextGame.font = "30px Verdana";
-	contextGame.fillText(game.elapsedSecs.toString(), 24, canvasGame.height - 24);
+	contextGame.fillText(game.elapsedSecs.toString(), cellsize, canvasGame.height - cellsize);
 	contextGame.font = "15px Verdana";
-	contextGame.fillText(game.lastFrames.toString(), 24, canvasGame.height - 50);
+	contextGame.fillText(game.lastFrames.toString(), cellsize, canvasGame.height - 50);
 }
 
 function paintImageRow(sprite, start, end, y) {
-	for (var x = start; x < end; x += 24) {
+	for (var x = start; x < end; x += cellsize) {
 		paintImage(sprite, x, y);
 	}
 }
 
 function paintImageColumn(sprite, start, end, x) {
-	for (var y = start; y < end; y += 24) {
+	for (var y = start; y < end; y += cellsize) {
 		paintImage(sprite, x, y);
 	}
 }
 
 function paintImage(sprite, x, y) {
-	contextGame.drawImage(imgSprites, sprite.left, 2, sprite.width, 24, x, y, sprite.width, 24);
+	contextGame.drawImage(imgSprites, sprite.left, 2, sprite.width, cellsize, x, y, sprite.width, cellsize);
 }
 
 function fillImageRect(sprite, x1, y1, x2, y2) {
-	for (var x = x1; x < x2; x += 24) {
-		for (var y = y1; y < y2; y += 24) {
+	for (var x = x1; x < x2; x += cellsize) {
+		for (var y = y1; y < y2; y += cellsize) {
 			paintImage(sprite, x, y);
 		}
 	}
