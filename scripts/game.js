@@ -15,9 +15,34 @@ var player = {
 	top : 24
 };
 
+var cellType = Object.freeze({
+	PASSAGE : "passage",
+	WALL : "wall",
+	BORDER : "border"
+});
+
 var maze = {
-	width : 720,
-	height : 480
+	width : 30,
+	height : 20,
+	cells : [],
+	setCell : function(x, y, value) {
+		this.cells[x][y] = value;
+	},
+	init : function() {
+		var x = 0, y = 0;
+		for (x; x < this.width; x++) {
+			this.cells[x] = [];
+			y = 0;
+			for (y; y < this.height; y++) {
+				if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
+					this.setCell(x, y, cellType.BORDER);
+				} else {
+					this.setCell(x, y, cellType.PASSAGE);
+				}
+			};
+			console.log(this.cells[x]);
+		};
+	}
 };
 
 var keys = [
@@ -84,18 +109,19 @@ imgSprites.src = "images/sprites.png";
 imgSprites.onload = init;
 
 function init() {
+	maze.init();
 	requestAnimFrame(gameLoop);
 	console.log("initialized");
 }
 
 function paintBorders() {
-	paintImageRow(gfx.darkbricks, 0, maze.width, 0);
-	paintImageColumn(gfx.darkbricks, cellsize, maze.height - cellsize, 0);
-	paintImageColumn(gfx.darkbricks, cellsize, maze.height - cellsize, maze.width - cellsize);
-	paintImageRow(gfx.darkbricks, 0, maze.width, maze.height - cellsize);
+	paintImageRow(gfx.darkbricks, 0, maze.width * cellsize, 0);
+	paintImageColumn(gfx.darkbricks, cellsize, maze.height * cellsize - cellsize, 0);
+	paintImageColumn(gfx.darkbricks, cellsize, maze.height * cellsize - cellsize, maze.width * cellsize - cellsize);
+	paintImageRow(gfx.darkbricks, 0, maze.width * cellsize, maze.height * cellsize - cellsize);
 	paintImage(gfx.door, 0, cellsize);
 	
-	fillImageRect(gfx.ground, cellsize, cellsize, maze.width - cellsize, maze.height - cellsize);
+	fillImageRect(gfx.ground, cellsize, cellsize, maze.width * cellsize - cellsize, maze.height * cellsize - cellsize);
 }
 
 function gameLoop() {
@@ -117,9 +143,9 @@ function paintElapsedTime() {
 	}
 	game.frames++;
 	contextGame.font = "30px Verdana";
-	contextGame.fillText(game.elapsedSecs.toString(), cellsize, canvasGame.height - cellsize);
+	contextGame.fillText(game.elapsedSecs.toString(), cellsize, canvasGame.height * cellsize - cellsize);
 	contextGame.font = "15px Verdana";
-	contextGame.fillText(game.lastFrames.toString(), cellsize, canvasGame.height - 50);
+	contextGame.fillText(game.lastFrames.toString(), cellsize, canvasGame.height * cellsize - 50);
 }
 
 function paintImageRow(sprite, start, end, y) {
