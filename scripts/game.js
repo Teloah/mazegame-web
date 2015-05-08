@@ -21,32 +21,36 @@ var maze = {
 };
 
 var keys = [
-	{
-		// left
+	{	// left
 		ord: 37,
 		exec : function() {
-			player.left = player.left - cellsize;
+			if (player.left > cellsize) { 
+				player.left = player.left - cellsize;
+			}
 		}
 	},
-	{
-		// up
+	{	// up
 		ord: 38,
 		exec : function() {
-			player.top = player.top - cellsize;
+			if (player.top > cellsize) {
+				player.top = player.top - cellsize;
+			}
 		}
 	},
-	{
-		// right
+	{	// right
 		ord: 39,
 		exec : function() {
-			player.left = player.left + cellsize;
+			if (player.left < maze.width - cellsize * 2) {
+				player.left = player.left + cellsize;
+			}
 		}
 	},
-	{
-		// down
+	{	// down
 		ord: 40,
 		exec : function() {
-			player.top = player.top + cellsize;
+			if (player.top < maze.height - cellsize * 2) {
+				player.top = player.top + cellsize;
+			}
 		}
 	}
 ];
