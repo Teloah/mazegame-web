@@ -65,7 +65,7 @@ var keys = [
 	{	// right
 		ord: 39,
 		exec : function() {
-			if (player.left < maze.width - cellsize * 2) {
+			if (player.left < (maze.width * cellsize - cellsize * 2)) {
 				player.left = player.left + cellsize;
 			}
 		}
@@ -73,7 +73,7 @@ var keys = [
 	{	// down
 		ord: 40,
 		exec : function() {
-			if (player.top < maze.height - cellsize * 2) {
+			if (player.top < maze.height * cellsize - cellsize * 2) {
 				player.top = player.top + cellsize;
 			}
 		}
