@@ -59,7 +59,11 @@ var maze = {
         if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
           this.setCell(x, y, cellType.BORDER);
         } else {
-          this.setCell(x, y, cellType.PASSAGE);
+          if (x % 2 === 0 && y % 2 === 0) {
+            this.setCell(x, y, cellType.WALL)
+          } else {
+            this.setCell(x, y, cellType.PASSAGE);
+          }
         }
       }
     }
