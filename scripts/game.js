@@ -3,6 +3,12 @@
 
 var cellsize = 24;
 
+var cellType = Object.freeze({
+  PASSAGE : "passage",
+  WALL : "wall",
+  BORDER : "border"
+});
+
 var game = {
   lastLoopTime : new Date(),
   elapsedSecs : 0,
@@ -11,15 +17,11 @@ var game = {
 };
 
 var player = {
-  left : 24,
-  top : 24
+  position : {
+    x : 1,
+    y : 1
+  }
 };
-
-var cellType = Object.freeze({
-  PASSAGE : "passage",
-  WALL : "wall",
-  BORDER : "border"
-});
 
 var gfx = {
   bricks :     { left: 2,   width: 24 },
@@ -60,46 +62,54 @@ var maze = {
           this.setCell(x, y, cellType.BORDER);
         } else {
           if (x % 2 === 0 && y % 2 === 0) {
-            this.setCell(x, y, cellType.WALL)
+            this.setCell(x, y, cellType.WALL);
           } else {
             this.setCell(x, y, cellType.PASSAGE);
           }
         }
       }
     }
+  },
+  canMoveInto: function(x, y) {
+    return this.cells[x][y] === cellType.PASSAGE;
   }
 };
+
 
 var keys = [
   { // left
     ord: 37,
     exec : function() {
-      if (player.left > cellsize) { 
-        player.left = player.left - cellsize;
+      var destX = player.position.x - 1;
+      if (maze.canMoveInto(destX, player.position.y)) {
+        player.position.x = destX;
       }
     }
   },
   { // up
     ord: 38,
     exec : function() {
-      if (player.top > cellsize) {
-        player.top = player.top - cellsize;
+      var destY = player.position.y - 1;
+      if (maze.canMoveInto(player.position.x, destY)) {
+        player.position.y = destY;
       }
     }
   },
   { // right
     ord: 39,
     exec : function() {
-      if (player.left < (maze.width * cellsize - cellsize * 2)) {
-        player.left = player.left + cellsize;
+      var destX = player.position.x + 1;
+      if (maze.canMoveInto(destX, player.position.y)) {
+        player.position.x = destX;
       }
     }
   },
   { // down
     ord: 40,
     exec : function() {
-      if (player.top < maze.height * cellsize - cellsize * 2) {
-        player.top = player.top + cellsize;
+      var destY = player.position.y + 1;
+      if (maze.canMoveInto(player.position.x, destY)) {
+        player.position.y = destY;
       }
     }
   }
@@ -132,7 +142,7 @@ function gameLoop() {
   document.getElementById("score").innerHTML = "<p>Score: " + game.elapsedSecs.toString() + "</p>";
   contextGame.clearRect(0, 0, canvasGame.width, canvasGame.height);
   paintMaze();
-  paintImage(gfx.player, player.left, player.top);
+  paintImage(gfx.player, player.position.x * cellsize, player.position.y * cellsize);
   paintElapsedTime();
   requestAnimFrame(gameLoop);
 }
