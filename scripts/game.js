@@ -6,7 +6,8 @@ var cellsize = 24;
 var cellType = Object.freeze({
   PASSAGE : "passage",
   WALL : "wall",
-  BORDER : "border"
+  BORDER : "border",
+  DOOR : "door"
 });
 
 var game = {
@@ -37,6 +38,7 @@ var gfx = {
       case cellType.PASSAGE: return this.ground;
       case cellType.WALL: return this.bricks;
       case cellType.BORDER: return this.darkbricks;
+      case cellType.DOOR: return this.door;
       default: return this.ground;
     }
   }
@@ -68,7 +70,8 @@ var maze = {
           }
         }
       }
-    }
+    };
+    this.cells[0][1] = cellType.DOOR;
   },
   canMoveInto: function(x, y) {
     return this.cells[x][y] === cellType.PASSAGE;
