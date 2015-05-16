@@ -10,6 +10,16 @@ var cellType = Object.freeze({
   DOOR : "door"
 });
 
+var items = Object.freeze({
+  TREASURE : "treasure",
+  ZOMBIE : "zombie"
+});
+
+function Pos(x, y) {
+  this.x = x;
+  this.y = y;
+}
+
 var game = {
   lastLoopTime : new Date(),
   elapsedSecs : 0,
@@ -17,12 +27,25 @@ var game = {
   lastFrames : 0
 };
 
-var player = {
-  position : {
-    x : 1,
-    y : 1
-  }
-};
+function Item(x, y) {
+  this.position = new Pos(x, y);
+}
+
+function Treasure(x, y) {
+  Item.call(this, x, y);
+  this.type = items.TREASURE;
+}
+Treasure.prototype = Object.create(Item.prototype);
+Treasure.prototype.constructor = Treasure;
+
+function Zombie(x, y) {
+  Item.call(this, x, y);
+  this.type = items.ZOMBIE;
+}
+Zombie.prototype = Object.create(Item.prototype);
+Zombie.prototype.constructor = Zombie;
+
+var player = new Item(1, 1);
 
 var gfx = {
   bricks :     { left: 2,   width: 24 },
@@ -33,13 +56,19 @@ var gfx = {
   zombie :     { left: 123, width: 16 },
   player :     { left: 142, width: 15 },
   box :        { left: 160, width: 15 },
-  getImageFor : function(celltype) {
-    switch (celltype) {
+  getCellImage : function(imageid) {
+    switch (imageid) {
       case cellType.PASSAGE: return this.ground;
       case cellType.WALL: return this.bricks;
       case cellType.BORDER: return this.darkbricks;
       case cellType.DOOR: return this.door;
       default: return this.ground;
+    }
+  },
+  getItemImage : function(item) {
+    switch (item.type) {
+      case items.TREASURE: return this.box;
+      case items.ZOMBIE: return this.zombie;
     }
   }
 };
@@ -70,7 +99,7 @@ var maze = {
           }
         }
       }
-    };
+    }
     this.cells[0][1] = cellType.DOOR;
   },
   canMoveInto: function(x, y) {
