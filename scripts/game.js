@@ -10,7 +10,7 @@ var cellType = Object.freeze({
   DOOR : "door"
 });
 
-var items = Object.freeze({
+var itemType = Object.freeze({
   TREASURE : "treasure",
   ZOMBIE : "zombie"
 });
@@ -33,14 +33,14 @@ function Item(x, y) {
 
 function Treasure(x, y) {
   Item.call(this, x, y);
-  this.type = items.TREASURE;
+  this.type = itemType.TREASURE;
 }
 Treasure.prototype = Object.create(Item.prototype);
 Treasure.prototype.constructor = Treasure;
 
 function Zombie(x, y) {
   Item.call(this, x, y);
-  this.type = items.ZOMBIE;
+  this.type = itemType.ZOMBIE;
 }
 Zombie.prototype = Object.create(Item.prototype);
 Zombie.prototype.constructor = Zombie;
@@ -67,8 +67,8 @@ var gfx = {
   },
   getItemImage : function(item) {
     switch (item.type) {
-      case items.TREASURE: return this.box;
-      case items.ZOMBIE: return this.zombie;
+      case itemType.TREASURE: return this.box;
+      case itemType.ZOMBIE: return this.zombie;
     }
   }
 };
@@ -77,6 +77,7 @@ var maze = {
   width : 30,
   height : 20,
   cells : [],
+  items : [],
   getCell : function(x, y) {
     return this.cells[x][y];
   },
@@ -101,6 +102,7 @@ var maze = {
       }
     }
     this.cells[0][1] = cellType.DOOR;
+    this.items[0] = new Zombie(this.width - 3, this.height - 3);
   },
   canMoveInto: function(x, y) {
     return this.cells[x][y] === cellType.PASSAGE;
@@ -174,6 +176,7 @@ function gameLoop() {
   document.getElementById("score").innerHTML = "<p>Score: " + game.elapsedSecs.toString() + "</p>";
   contextGame.clearRect(0, 0, canvasGame.width, canvasGame.height);
   paintMaze();
+  paintItems();
   paintImage(gfx.player, player.position.x * cellsize, player.position.y * cellsize);
   paintElapsedTime();
   requestAnimFrame(gameLoop);
@@ -184,9 +187,15 @@ function paintMaze() {
   for (x; x < maze.width; x++) {
     y = 0;
     for (y; y < maze.height; y++) {
-      paintImage(gfx.getImageFor(maze.getCell(x, y)), x * cellsize, y * cellsize);
+      paintImage(gfx.getCellImage(maze.getCell(x, y)), x * cellsize, y * cellsize);
     }
   }
+}
+
+function paintItems() {
+  maze.items.forEach(function(item) {
+    paintImage(gfx.getItemImage(item), item.position.x * cellsize, item.position.y * cellsize);
+  });
 }
 
 function paintElapsedTime() {
