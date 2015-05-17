@@ -20,16 +20,43 @@ function Pos(x, y) {
   this.y = y;
 }
 
-var game = {
-  lastLoopTime : new Date(),
-  elapsedSecs : 0,
-  frames : 0,
-  lastFrames : 0
+function Timer(owner, timeout) {
+  this.owner = owner;
+  this.lastTime = new Date();
+  this.timeout = timeout;
+}
+Timer.prototype.onTick = function(owner) {
 };
+Timer.prototype.tick = function() {
+  var tickTime = new Date();
+  if ((tickTime - this.lastTime) > this.timeout) {
+    this.lastTime = tickTime;
+    this.onTick(this.owner);
+  }
+};
+
+function Game() {
+  this.elapsedSecs = 0;
+  this.frames = 0;
+  this.lastFrames = 0;
+  this.timer = new Timer(this, 1000);
+  this.timer.onTick = function(owner) {
+    owner.lastFrames = owner.frames;
+    owner.frames = 0;
+    owner.elapsedSecs++;
+  };
+}
+Game.prototype.tick = function() {
+  this.timer.tick();
+};
+
+var game = new Game();
 
 function Item(x, y) {
   this.position = new Pos(x, y);
 }
+Item.prototype.tick = function() {
+};
 
 var player = new Item(1, 1);
 
@@ -69,8 +96,8 @@ function Cell(x, y, celltype) {
 var maze = {
   width : 30,
   height : 20,
-  cells : new Array(),
-  items : new Array(),
+  cells : [],
+  items : [],
   getCell : function(x, y) {
     if (x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) {
       return null;
@@ -87,7 +114,7 @@ var maze = {
   init : function() {
     var x = 0, y = 0;
     for (x; x < this.width; x++) {
-      this.cells[x] = new Array();
+      this.cells[x] = [];
       y = 0;
       for (y; y < this.height; y++) {
         if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
@@ -106,13 +133,16 @@ var maze = {
   canMoveInto: function(x, y) {
     return this.getCell(x, y).type === cellType.PASSAGE;
   },
-  getEmptyRandomNeightbour: function(x, y) {
+  getNeighbours: function(pos) {
     var neighbours = new Array(
-      this.getCell(x, y - 1),
-      this.getCell(x + 1, y),
-      this.getCell(x, y + 1),
-      this.getCell(x - 1, y));
-    return neighbours.filter(function(n) {return n != null});
+      this.getCell(pos.x, pos.y - 1),
+      this.getCell(pos.x + 1, pos.y),
+      this.getCell(pos.x, pos.y + 1),
+      this.getCell(pos.x - 1, pos.y));
+    return neighbours.filter(function(n) { return n !== null; });
+  },
+  tick: function() {
+    this.items.forEach(function(item) { item.tick(); });
   }
 };
 
@@ -131,14 +161,30 @@ function Monster(x, y) {
 Monster.prototype = Object.create(Item.prototype);
 Monster.prototype.constructor = Monster;
 Monster.prototype.moveTo = function (x, y) {
-}
+  this.position.x = x;
+  this.position.y = y;
+};
 
 function Zombie(x, y) {
   Monster.call(this, x, y);
   this.type = itemType.ZOMBIE;
+  this.timer = new Timer(this, 500);
+  this.timer.onTick = function(owner) {
+    var neighbour = maze.getNeighbours(owner.position);
+    if (neighbour.length > 0) {
+      var id = Math.random() * 4;
+      var cell = neighbour[Math.floor(id)];
+      if (maze.canMoveInto(cell.position.x, cell.position.y)) {
+        owner.moveTo(cell.position.x, cell.position.y);
+      }
+    }
+  };
 }
 Zombie.prototype = Object.create(Monster.prototype);
 Zombie.prototype.constructor = Zombie;
+Zombie.prototype.tick = function() {
+  this.timer.tick();
+};
 
 // ---------------------------- KEYS ------------------------------
 
@@ -209,6 +255,7 @@ function init() {
 function gameLoop() {
   document.getElementById("score").innerHTML = "<p>Score: " + game.elapsedSecs.toString() + "</p>";
   contextGame.clearRect(0, 0, canvasGame.width, canvasGame.height);
+  maze.tick();
   paintMaze();
   paintItems();
   paintImage(gfx.player, player.position.x * cellsize, player.position.y * cellsize);
@@ -233,13 +280,7 @@ function paintItems() {
 }
 
 function paintElapsedTime() {
-  var tickTime = new Date();
-  if ((tickTime - game.lastLoopTime) > 1000) {
-    game.lastFrames = game.frames;
-    game.frames = 0;
-    game.lastLoopTime = tickTime;
-    game.elapsedSecs++;
-  }
+  game.tick();
   game.frames++;
   contextGame.font = "30px Verdana";
   contextGame.fillText(game.elapsedSecs.toString(), cellsize, canvasGame.height - cellsize);
