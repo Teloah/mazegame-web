@@ -31,20 +31,6 @@ function Item(x, y) {
   this.position = new Pos(x, y);
 }
 
-function Treasure(x, y) {
-  Item.call(this, x, y);
-  this.type = itemType.TREASURE;
-}
-Treasure.prototype = Object.create(Item.prototype);
-Treasure.prototype.constructor = Treasure;
-
-function Zombie(x, y) {
-  Item.call(this, x, y);
-  this.type = itemType.ZOMBIE;
-}
-Zombie.prototype = Object.create(Item.prototype);
-Zombie.prototype.constructor = Zombie;
-
 var player = new Item(1, 1);
 
 var gfx = {
@@ -73,42 +59,88 @@ var gfx = {
   }
 };
 
+// ---------------------------- MAZE ------------------------------
+
+function Cell(x, y, celltype) {
+  this.position = new Pos(x, y);
+  this.type = celltype;
+}
+
 var maze = {
   width : 30,
   height : 20,
-  cells : [],
-  items : [],
+  cells : new Array(),
+  items : new Array(),
   getCell : function(x, y) {
-    return this.cells[x][y];
+    if (x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) {
+      return null;
+    } else {
+      return this.cells[x][y];
+    }
   },
-  setCell : function(x, y, value) {
-    this.cells[x][y] = value;
+  setCell : function(value) {
+    this.cells[value.position.x][value.position.y] = value;
+  },
+  addItem : function(item) {
+    this.items[this.items.length] = item;
   },
   init : function() {
     var x = 0, y = 0;
     for (x; x < this.width; x++) {
-      this.cells[x] = [];
+      this.cells[x] = new Array();
       y = 0;
       for (y; y < this.height; y++) {
         if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
-          this.setCell(x, y, cellType.BORDER);
+          this.setCell(new Cell(x, y, cellType.BORDER));
         } else {
           if (x % 2 === 0 && y % 2 === 0) {
-            this.setCell(x, y, cellType.WALL);
+            this.setCell(new Cell(x, y, cellType.WALL));
           } else {
-            this.setCell(x, y, cellType.PASSAGE);
+            this.setCell(new Cell(x, y, cellType.PASSAGE));
           }
         }
       }
     }
-    this.cells[0][1] = cellType.DOOR;
-    this.items[0] = new Zombie(this.width - 3, this.height - 3);
+    this.getCell(0, 1).type = cellType.DOOR;
   },
   canMoveInto: function(x, y) {
-    return this.cells[x][y] === cellType.PASSAGE;
+    return this.getCell(x, y).type === cellType.PASSAGE;
+  },
+  getEmptyRandomNeightbour: function(x, y) {
+    var neighbours = new Array(
+      this.getCell(x, y - 1),
+      this.getCell(x + 1, y),
+      this.getCell(x, y + 1),
+      this.getCell(x - 1, y));
+    return neighbours.filter(function(n) {return n != null});
   }
 };
 
+// ---------------------------- ITEMS ------------------------------
+
+function Treasure(x, y) {
+  Item.call(this, x, y);
+  this.type = itemType.TREASURE;
+}
+Treasure.prototype = Object.create(Item.prototype);
+Treasure.prototype.constructor = Treasure;
+
+function Monster(x, y) {
+  Item.call(this, x, y);
+}
+Monster.prototype = Object.create(Item.prototype);
+Monster.prototype.constructor = Monster;
+Monster.prototype.moveTo = function (x, y) {
+}
+
+function Zombie(x, y) {
+  Monster.call(this, x, y);
+  this.type = itemType.ZOMBIE;
+}
+Zombie.prototype = Object.create(Monster.prototype);
+Zombie.prototype.constructor = Zombie;
+
+// ---------------------------- KEYS ------------------------------
 
 var keys = [
   { // left
@@ -168,6 +200,8 @@ imgSprites.onload = init;
 
 function init() {
   maze.init();
+  maze.addItem(new Zombie(maze.width - 3, maze.height - 3));
+  maze.addItem(new Treasure(maze.width - 5, maze.height - 5));
   requestAnimFrame(gameLoop);
   console.log("initialized");
 }
@@ -187,7 +221,7 @@ function paintMaze() {
   for (x; x < maze.width; x++) {
     y = 0;
     for (y; y < maze.height; y++) {
-      paintImage(gfx.getCellImage(maze.getCell(x, y)), x * cellsize, y * cellsize);
+      paintImage(gfx.getCellImage(maze.getCell(x, y).type), x * cellsize, y * cellsize);
     }
   }
 }
