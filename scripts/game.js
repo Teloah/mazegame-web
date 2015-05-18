@@ -141,6 +141,18 @@ var maze = {
       this.getCell(pos.x - 1, pos.y));
     return neighbours.filter(function(n) { return n !== null; });
   },
+  getRandomNeighbour: function(pos, predicate) {
+    var neighbours = maze.getNeighbours(pos);
+    if (predicate) {
+      neighbours = neighbours.filter(predicate);
+    }
+    if (neighbours.length > 0) {
+      var id = Math.random() * neighbours.length;
+      var cell = neighbours[Math.floor(id)];
+      return cell;
+    }
+    return null;
+  },
   tick: function() {
     this.items.forEach(function(item) { item.tick(); });
   }
@@ -170,13 +182,11 @@ function Zombie(x, y) {
   this.type = itemType.ZOMBIE;
   this.timer = new Timer(this, 500);
   this.timer.onTick = function(owner) {
-    var neighbour = maze.getNeighbours(owner.position);
-    if (neighbour.length > 0) {
-      var id = Math.random() * 4;
-      var cell = neighbour[Math.floor(id)];
-      if (maze.canMoveInto(cell.position.x, cell.position.y)) {
-        owner.moveTo(cell.position.x, cell.position.y);
-      }
+    var cell = maze.getRandomNeighbour(owner.position,
+      function(c) { return maze.canMoveInto(c.position.x, c.position.y); }
+    );
+    if (cell) {
+      owner.moveTo(cell.position.x, cell.position.y);
     }
   };
 }
