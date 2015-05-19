@@ -58,6 +58,39 @@ function Item(x, y) {
 Item.prototype.tick = function() {
 };
 
+function ItemList() {
+  this.items = [];
+}
+ItemList.prototype.getRow = function(x) {
+  var list = this.items[x];
+  if (!list) {
+    list = [];
+    this.items[x] = list;
+  }
+  return list;
+};
+ItemList.prototype.addItem = function(item) {
+  var list = this.getRow(item.position.x);
+  list[item.position.y] = item;
+};
+ItemList.prototype.getItem = function(x, y) {
+  var list = this.getRow(x);
+  return list[y];
+};
+ItemList.prototype.forEach = function(callback) {
+  var x = 0, y = 0, list = [], item;
+  for (x; x < this.items.length; x++) {
+    list = this.getRow(x);
+    y = 0;
+    for (y; y < list.length; y++) {
+      item = list[y];
+      if (item) {
+        callback(item);
+      }
+    }
+  }
+};
+
 var player = new Item(1, 1);
 
 var gfx = {
@@ -97,7 +130,7 @@ var maze = {
   width : 30,
   height : 20,
   cells : [],
-  items : [],
+  items : new ItemList(),
   getCell : function(x, y) {
     if (x < 0 || x > this.width - 1 || y < 0 || y > this.height - 1) {
       return null;
@@ -109,7 +142,7 @@ var maze = {
     this.cells[value.position.x][value.position.y] = value;
   },
   addItem : function(item) {
-    this.items[this.items.length] = item;
+    this.items.addItem(item);
   },
   init : function() {
     var x = 0, y = 0;
@@ -131,7 +164,10 @@ var maze = {
     this.getCell(0, 1).type = cellType.DOOR;
   },
   canMoveInto: function(x, y) {
-    return this.getCell(x, y).type === cellType.PASSAGE;
+    if (this.getCell(x, y).type !== cellType.PASSAGE)
+      return false;
+    var item = this.items.getItem(x, y);
+    return !(item instanceof Monster);
   },
   getNeighbours: function(pos) {
     var neighbours = new Array(
