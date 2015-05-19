@@ -256,8 +256,10 @@ imgSprites.onload = init;
 
 function init() {
   maze.init();
-  maze.addItem(new Zombie(maze.width - 3, maze.height - 3));
-  maze.addItem(new Treasure(maze.width - 5, maze.height - 5));
+  for (var x = 3; x < 10; x = x + 2) {
+    maze.addItem(new Zombie(maze.width - x, maze.height - x));
+  }
+  maze.addItem(new Treasure(maze.width - 5, maze.height - 4));
   requestAnimFrame(gameLoop);
   console.log("initialized");
 }
