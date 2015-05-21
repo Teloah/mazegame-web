@@ -73,6 +73,10 @@ ItemList.prototype.addItem = function(item) {
   var list = this.getRow(item.position.x);
   list[item.position.y] = item;
 };
+ItemList.prototype.removeItem = function(item) {
+  var list = this.getRow(item.position.x);
+  list[item.position.y] = undefined;
+};
 ItemList.prototype.getItem = function(x, y) {
   var list = this.getRow(x);
   return list[y];
@@ -169,6 +173,11 @@ var maze = {
     var item = this.items.getItem(x, y);
     return !(item instanceof Monster);
   },
+  moveItem: function(item, x, y) {
+    this.items.removeItem(item);
+    item.moveTo(x, y);
+    this.items.addItem(item);
+  },
   getNeighbours: function(pos) {
     var neighbours = new Array(
       this.getCell(pos.x, pos.y - 1),
@@ -178,7 +187,7 @@ var maze = {
     return neighbours.filter(function(n) { return n !== null; });
   },
   getRandomNeighbour: function(pos, predicate) {
-    var neighbours = maze.getNeighbours(pos);
+    var neighbours = this.getNeighbours(pos);
     if (predicate) {
       neighbours = neighbours.filter(predicate);
     }
@@ -222,7 +231,7 @@ function Zombie(x, y) {
       function(c) { return maze.canMoveInto(c.position.x, c.position.y); }
     );
     if (cell) {
-      owner.moveTo(cell.position.x, cell.position.y);
+      maze.moveItem(owner, cell.position.x, cell.position.y);
     }
   };
 }
