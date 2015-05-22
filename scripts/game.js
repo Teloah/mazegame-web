@@ -20,6 +20,8 @@ function Pos(x, y) {
   this.y = y;
 }
 
+// ---------------------------- GAME ------------------------------
+
 function Timer(owner, timeout) {
   this.owner = owner;
   this.lastTime = new Date();
@@ -34,6 +36,8 @@ Timer.prototype.tick = function() {
     this.onTick(this.owner);
   }
 };
+
+// ---------------------------- GAME ------------------------------
 
 function Game() {
   this.elapsedSecs = 0;
@@ -52,11 +56,15 @@ Game.prototype.tick = function() {
 
 var game = new Game();
 
+// ---------------------------- ITEM ------------------------------
+
 function Item(x, y) {
   this.position = new Pos(x, y);
 }
 Item.prototype.tick = function() {
 };
+
+// ---------------------------- ITEMLIST ------------------------------
 
 function ItemList() {
   this.items = [];
