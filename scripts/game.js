@@ -19,8 +19,11 @@ function Pos(x, y) {
   this.x = x;
   this.y = y;
 }
+Pos.prototype.equals = function(x, y) {
+  return (this.x === x && this.y ===y);
+}
 
-// ---------------------------- GAME ------------------------------
+// ---------------------------- TIMER ------------------------------
 
 function Timer(owner, timeout) {
   this.owner = owner;
@@ -69,38 +72,22 @@ Item.prototype.tick = function() {
 function ItemList() {
   this.items = [];
 }
-ItemList.prototype.getRow = function(x) {
-  var list = this.items[x];
-  if (!list) {
-    list = [];
-    this.items[x] = list;
-  }
-  return list;
-};
 ItemList.prototype.addItem = function(item) {
-  var list = this.getRow(item.position.x);
-  list[item.position.y] = item;
+  this.items.push(item);
 };
 ItemList.prototype.removeItem = function(item) {
-  var list = this.getRow(item.position.x);
-  list[item.position.y] = undefined;
-};
-ItemList.prototype.getItem = function(x, y) {
-  var list = this.getRow(x);
-  return list[y];
+  var index = this.items.indexOf(item);
+  if (index > -1) {
+    this.items.splice(index, 1);
+  }
 };
 ItemList.prototype.forEach = function(callback) {
-  var x = 0, y = 0, list = [], item;
-  for (x; x < this.items.length; x++) {
-    list = this.getRow(x);
-    y = 0;
-    for (y; y < list.length; y++) {
-      item = list[y];
-      if (item) {
-        callback(item);
-      }
-    }
-  }
+  this.items.forEach(callback);
+};
+ItemList.prototype.getItems = function(x, y) {
+  var list = [];
+  this.items.forEach(function(item) { if (item.position.equals(x, y)) { list.push(item); } });
+  return list;
 };
 
 var player = new Item(1, 1);
@@ -178,8 +165,8 @@ var maze = {
   canMoveInto: function(x, y) {
     if (this.getCell(x, y).type !== cellType.PASSAGE)
       return false;
-    var item = this.items.getItem(x, y);
-    return !(item instanceof Monster);
+    var items = this.items.getItems(x, y);
+    return items.length === 0;
   },
   moveItem: function(item, x, y) {
     this.items.removeItem(item);
