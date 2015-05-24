@@ -220,7 +220,19 @@ function Zombie(x, y) {
   this.timer = new Timer(this, 500);
   this.timer.onTick = function(owner) {
     var cell = maze.getRandomNeighbour(owner.position,
-      function(c) { return maze.canMoveInto(c.position.x, c.position.y); }
+      function(c) {
+        if (!maze.canMoveInto(c.position.x, c.position.y)) {
+          return false;
+        };
+        var items = maze.items.getItems(c.position.x, c.position.y);
+        var cnt = items.length, i = 0;
+        for (i; i < cnt; i++) {
+          if (items[i] instanceof Monster) {
+            return false;
+          };
+        };
+        return true;
+      }
     );
     if (cell) {
       maze.moveItem(owner, cell.position.x, cell.position.y);
