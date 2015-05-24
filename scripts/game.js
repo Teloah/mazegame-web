@@ -163,10 +163,7 @@ var maze = {
     this.getCell(0, 1).type = cellType.DOOR;
   },
   canMoveInto: function(x, y) {
-    if (this.getCell(x, y).type !== cellType.PASSAGE)
-      return false;
-    var items = this.items.getItems(x, y);
-    return items.length === 0;
+    return this.getCell(x, y).type === cellType.PASSAGE;
   },
   moveItem: function(item, x, y) {
     this.items.removeItem(item);
