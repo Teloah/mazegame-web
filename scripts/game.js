@@ -21,7 +21,7 @@ function Pos(x, y) {
 }
 Pos.prototype.equals = function(x, y) {
   return (this.x === x && this.y ===y);
-}
+};
 
 // ---------------------------- TIMER ------------------------------
 
@@ -246,14 +246,14 @@ function Zombie(x, y) {
       function(c) {
         if (!maze.canMoveInto(c.position.x, c.position.y)) {
           return false;
-        };
+        }
         var items = maze.items.getItems(c.position.x, c.position.y);
         var cnt = items.length, i = 0;
         for (i; i < cnt; i++) {
           if (items[i] instanceof Monster) {
             return false;
-          };
-        };
+          }
+        }
         return true;
       }
     );
