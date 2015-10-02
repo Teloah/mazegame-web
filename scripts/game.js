@@ -144,22 +144,7 @@ var maze = {
     this.items.addItem(item);
   },
   init : function() {
-    var x = 0, y = 0;
-    for (x; x < this.width; x++) {
-      this.cells[x] = [];
-      y = 0;
-      for (y; y < this.height; y++) {
-        if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
-          this.setCell(new Cell(x, y, cellType.BORDER));
-        } else {
-          if (x % 2 === 0 && y % 2 === 0) {
-            this.setCell(new Cell(x, y, cellType.WALL));
-          } else {
-            this.setCell(new Cell(x, y, cellType.PASSAGE));
-          }
-        }
-      }
-    }
+    this.generate();
     this.getCell(0, 1).type = cellType.DOOR;
   },
   canMoveInto: function(x, y) {
@@ -214,7 +199,35 @@ var maze = {
     // random cell, the Maze will have a high "river" factor but a short
     // direct solution. If you randomly pick among the most recent cells,
     // the Maze will have a low "river" factor but a long windy solution.
-
+    var x = 0, y = 0;
+    for (x; x < this.width; x++) {
+      this.cells[x] = [];
+      y = 0;
+      for (y; y < this.height; y++) {
+        if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
+          this.setCell(new Cell(x, y, cellType.BORDER));
+        } else {
+          this.setCell(new Cell(x, y, cellType.PASSAGE));
+        }
+      }
+    }
+    var stack = [];
+    stack[0] = new Cell(1, 1, cellType.PASSAGE);
+    var neighbour, cell;
+    console.log("generating...");
+    while (stack.length > 0) {
+      cell = stack[stack.length - 1];
+      console.log("-- cell: ", cell);
+      neighbour = this.getRandomNeighbour(cell.position);
+      console.log("-- neightbour: ", neighbour);
+      /* if (neighbour) {
+        stack[stack.length] = neighbour;
+      } else {
+        stack[stack.length - 1] = undefined;
+      } */
+      stack.pop();
+    }
+    console.log("done");
   }
 };
 
@@ -326,6 +339,8 @@ var canvasGame = document.getElementById("maingame"),
 imgSprites.src = "images/sprites.png";
 imgSprites.onload = init;
 
+var score = document.getElementById("score");
+
 function init() {
   maze.init();
   for (var x = 3; x < 10; x = x + 2) {
@@ -337,7 +352,7 @@ function init() {
 }
 
 function gameLoop() {
-  document.getElementById("score").innerHTML = "<p>Score: " + game.elapsedSecs.toString() + "</p>";
+  score.innerHTML = "<p>Score: " + game.elapsedSecs.toString() + "</p>";
   contextGame.clearRect(0, 0, canvasGame.width, canvasGame.height);
   maze.tick();
   paintMaze();
