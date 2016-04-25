@@ -207,7 +207,7 @@ var maze = {
         if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
           this.setCell(new Cell(x, y, cellType.BORDER));
         } else {
-          this.setCell(new Cell(x, y, cellType.PASSAGE));
+          this.setCell(new Cell(x, y, cellType.WALL));
         }
       }
     }
@@ -218,14 +218,17 @@ var maze = {
     while (stack.length > 0) {
       cell = stack[stack.length - 1];
       console.log("-- cell: ", cell);
-      neighbour = this.getRandomNeighbour(cell.position);
+      neighbour = this.getRandomNeighbour(cell.position,
+          function(c){
+            return c.type === cellType.WALL;
+          });
       console.log("-- neightbour: ", neighbour);
-      /* if (neighbour) {
+      if (neighbour) {
+        neighbour.type = cellType.PASSAGE;
         stack[stack.length] = neighbour;
       } else {
-        stack[stack.length - 1] = undefined;
-      } */
-      stack.pop();
+        stack.pop();
+      }
     }
     console.log("done");
   }
