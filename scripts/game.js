@@ -199,11 +199,9 @@ var maze = {
     // random cell, the Maze will have a high "river" factor but a short
     // direct solution. If you randomly pick among the most recent cells,
     // the Maze will have a low "river" factor but a long windy solution.
-    var x = 0, y = 0;
-    for (x; x < this.width; x++) {
+    for (var x = 0; x < this.width; x++) {
       this.cells[x] = [];
-      y = 0;
-      for (y; y < this.height; y++) {
+      for (var y = 0; y < this.height; y++) {
         if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
           this.setCell(new Cell(x, y, cellType.BORDER));
         } else {
@@ -264,8 +262,7 @@ function Zombie(x, y) {
           return false;
         }
         var items = maze.items.getItems(c.position.x, c.position.y);
-        var cnt = items.length, i = 0;
-        for (i; i < cnt; i++) {
+        for (var i = 0, len = items.length; i < len; i++) {
           if (items[i] instanceof Monster) {
             return false;
           }
@@ -366,10 +363,8 @@ function gameLoop() {
 }
 
 function paintMaze() {
-  var x = 0, y;
-  for (x; x < maze.width; x++) {
-    y = 0;
-    for (y; y < maze.height; y++) {
+  for (var x = 0; x < maze.width; x++) {
+    for (var y = 0; y < maze.height; y++) {
       paintImage(gfx.getCellImage(maze.getCell(x, y).type), x * cellsize, y * cellsize);
     }
   }
